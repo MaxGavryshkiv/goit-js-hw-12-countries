@@ -1,7 +1,10 @@
-import { alert, defaultModules } from '@pnotify/core';
-import * as PNotifyMobile from '@pnotify/mobile';
-defaultModules.set(PNotifyMobile, {});
-
+import { info, alert, defaultModules } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import '@pnotify/core/dist/BrightTheme.css';
+import * as Confirm from '@pnotify/confirm';
+import '@pnotify/confirm/dist/PNotifyConfirm.css';
+// defaultModules.set(PNotifyMobile, {});
+import fetchCountries from './fetchCountries';
 export default 'fetch';
 import aboutCountry from '../templates/about-country.hbs';
 import countryList from '../templates/country-list.hbs';
@@ -16,17 +19,13 @@ countryInput.addEventListener('input', debounce(onInput, 500));
 
 function onInput(event) {
   const inputValue = event.target.value;
-  fetchCountry(inputValue)
+  if (inputValue.trim() === '') {
+    return;
+  }
+
+  fetchCountries(inputValue)
     .then(renderCountrys)
     .catch(error => console.log(error));
-}
-
-function fetchCountry(CountryName) {
-  return fetch(`https://restcountries.eu/rest/v2/name/${CountryName}`).then(
-    response => {
-      return response.json();
-    },
-  );
 }
 
 function renderCountrys(country) {
@@ -36,8 +35,13 @@ function renderCountrys(country) {
   } else if (country.length >= 2 && country.length <= 10) {
     listMarkupFunc(country);
     countryMarkupFunc('');
+    messagePnotify(
+      'Too many matches found. Please enter a more specific query!',
+    );
   } else if (country.length > 10) {
-    alertFunc('Too many matches found. Please enter a more specific query!');
+    messagePnotify(
+      'Too many matches found. Please enter a more specific query!',
+    );
     listMarkupFunc('');
   }
 }
@@ -46,12 +50,15 @@ function countryMarkupFunc(country) {
   const countryMarkup = aboutCountry(country);
   aboutCountryBoxRef.innerHTML = countryMarkup;
 }
+
 function listMarkupFunc(country) {
   const listMarkup = countryList(country);
   countryListBoxRef.innerHTML = listMarkup;
 }
-function alertFunc(message) {
-  alert({
+
+function messagePnotify(message) {
+  new alert({
+    title: 'Search problem',
     text: message,
   });
 }

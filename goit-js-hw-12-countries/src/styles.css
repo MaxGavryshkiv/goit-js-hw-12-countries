@@ -35,3 +35,17 @@ body {
   width: 350px;
   background-color: aquamarine;
 }
+
+/* .custom-notification-alert-error {
+  color: #1b1e21;
+  background-color: #d6d8d9;
+  border-color: #c6c8ca;
+}
+
+.custom-notification-alert-error {
+  border-color: #c6c8ca;
+}
+
+/* .custom-notification-alert-error {
+  background-color: aquamarine;
+} */
